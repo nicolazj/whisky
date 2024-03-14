@@ -2,10 +2,15 @@ import Versions from './components/Versions'
 import electronLogo from './assets/electron.svg'
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  const ipcHandle = (): void => {
+    console.log('hi123', window.api)
+
+    window.api.ping()
+  }
 
   return (
     <>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <img alt="logo" className="logo" src={electronLogo} />
       <div className="creator">Powered by electron-vite</div>
       <div className="text">
@@ -23,7 +28,7 @@ function App(): JSX.Element {
         </div>
         <div className="action">
           <a target="_blank" rel="noreferrer" onClick={ipcHandle}>
-            Send IPC
+            Send IPC 123123
           </a>
         </div>
       </div>
