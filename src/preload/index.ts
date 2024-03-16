@@ -1,11 +1,20 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import ffmpegPath from 'ffmpeg-static'
+console.log(ffmpegPath)
+import { API } from './types'
 
 // Custom APIs for renderer
-export const api: {
-  ping: () => void
-} = {
-  ping: () => ipcRenderer.send('ping')
+export const api: API = {
+  ping: () => ipcRenderer.send('ping'),
+  transcribe: (filepath: string) => {
+
+    
+
+
+
+    return ipcRenderer.invoke('transcribe', filepath)
+  }
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

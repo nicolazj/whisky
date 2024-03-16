@@ -2,13 +2,19 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import FfmpegWrapper from './ffmpeg'
+import { whisper } from './whisper'
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 600,
+    height: 400,
     show: false,
+    // frame:false,
+    titleBarStyle: 'hidden',
+    // roundedCorners: false,
+    // resizable: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -25,6 +31,7 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+  mainWindow.webContents.openDevTools()
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -51,6 +58,13 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.handle('transcribe', async (_event, filepath) => {
+    console.log(filepath)
+    let ffmpeg = new FfmpegWrapper()
+    let wavPath = await ffmpeg.convertToWav(filepath, './1.wav')
+    console.log({ wavPath })
+    let a = await whisper.transcribe({ file: wavPath })
+  })
 
   createWindow()
 
