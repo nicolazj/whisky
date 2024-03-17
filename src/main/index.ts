@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import FfmpegWrapper from './ffmpeg'
 import { whisper } from './whisper'
 
+
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({

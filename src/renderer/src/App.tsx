@@ -1,13 +1,25 @@
-import { Droper } from './Droper'
+import { ThemeProvider } from './components/theme-provider'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+// Import the generated route tree
+import { routeTree } from './routeTree.gen'
+
+// Create a new router instance
+const router = createRouter({ routeTree })
+
+// Register the router instance for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+
 
 function App(): JSX.Element {
   return (
-    <div className="w-full h-full flex flex-col">
-      <header className="h-8 w-full drag"></header>
-      <ResizablePanelGroup>
-        
-      </ResizablePanelGroup>
-    </div>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <RouterProvider router={router} />
+    </ThemeProvider>
   )
 }
 
