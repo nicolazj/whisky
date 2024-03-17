@@ -16,10 +16,28 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
+const SettingsLazyImport = createFileRoute('/settings')()
+const QueueLazyImport = createFileRoute('/queue')()
+const ChatLazyImport = createFileRoute('/chat')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
+
+const SettingsLazyRoute = SettingsLazyImport.update({
+  path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
+
+const QueueLazyRoute = QueueLazyImport.update({
+  path: '/queue',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/queue.lazy').then((d) => d.Route))
+
+const ChatLazyRoute = ChatLazyImport.update({
+  path: '/chat',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/chat.lazy').then((d) => d.Route))
 
 const AboutLazyRoute = AboutLazyImport.update({
   path: '/about',
@@ -43,11 +61,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutLazyImport
       parentRoute: typeof rootRoute
     }
+    '/chat': {
+      preLoaderRoute: typeof ChatLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/queue': {
+      preLoaderRoute: typeof QueueLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/settings': {
+      preLoaderRoute: typeof SettingsLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([IndexLazyRoute, AboutLazyRoute])
+export const routeTree = rootRoute.addChildren([
+  IndexLazyRoute,
+  AboutLazyRoute,
+  ChatLazyRoute,
+  QueueLazyRoute,
+  SettingsLazyRoute,
+])
 
 /* prettier-ignore-end */

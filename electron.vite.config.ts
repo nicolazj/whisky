@@ -48,7 +48,6 @@ export default defineConfig({
       react(),
       TanStackRouterVite({
         routesDirectory: 'src/renderer/src/routes',
-
         generatedRouteTree:'src/renderer/src/routeTree.gen.ts'
       })
     ]

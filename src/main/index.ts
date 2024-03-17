@@ -5,12 +5,12 @@ import icon from '../../resources/icon.png?asset'
 import FfmpegWrapper from './ffmpeg'
 import { whisper } from './whisper'
 
-
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 800,
+    height: 600,
+    minWidth:800,
     show: false,
     // frame:false,
     titleBarStyle: 'hidden',
