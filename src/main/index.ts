@@ -4,6 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import FfmpegWrapper from './ffmpeg'
 import { whisper } from './whisper'
+import { db } from './db'
+import { runMigration } from './db/migrate'
 
 function createWindow(): void {
   // Create the browser window.
@@ -46,7 +48,7 @@ function createWindow(): void {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -59,13 +61,15 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
-  ipcMain.handle('transcribe', async (_event, filepath) => {
-    console.log(filepath)
-    let ffmpeg = new FfmpegWrapper()
-    let wavPath = await ffmpeg.convertToWav(filepath, './1.wav')
-    console.log({ wavPath })
-    let a = await whisper.transcribe({ file: wavPath })
-  })
+  // ipcMain.handle('transcribe', async (_event, filepath) => {
+  //   console.log(filepath)
+  //   let ffmpeg = new FfmpegWrapper()
+  //   let wavPath = await ffmpeg.convertToWav(filepath, './1.wav')
+  //   console.log({ wavPath })
+  //   let a = await whisper.transcribe({ file: wavPath })
+  // })
+  await runMigration()
+  db.registerIpcHandlers()
 
   createWindow()
 

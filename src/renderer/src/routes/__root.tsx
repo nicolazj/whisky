@@ -1,17 +1,19 @@
 import { Separator } from '@radix-ui/react-separator'
 import { Nav } from '@renderer/components/nav'
 import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup
 } from '@renderer/components/resizable'
 import { cn } from '@renderer/lib/utils'
+import { useFetchTasks } from '@renderer/query'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { AudioLines, Bot, ListOrdered, Settings } from 'lucide-react'
 import React from 'react'
 export const Route = createRootRoute({
   component: () => {
     const [isCollapsed, setIsCollapsed] = React.useState(false)
+    const { data: task } = useFetchTasks()
     return (
       <>
         <header className="h-8 w-full drag border-b"></header>
@@ -41,20 +43,17 @@ export const Route = createRootRoute({
                     title: 'Transcriptions',
                     //   label: '128',
                     icon: AudioLines,
-                    variant: 'default'
                   },
                   {
-                    to: '/settings',
+                    to: '/queue',
                     title: 'Queue',
-                    label: '9',
+                    label: task?.length?.toString() ?? '',
                     icon: ListOrdered,
-                    variant: 'ghost'
                   },
                   {
                     to: '/chat',
                     title: 'Chat',
                     icon: Bot,
-                    variant: 'ghost'
                   }
                 ]}
               />
@@ -67,7 +66,6 @@ export const Route = createRootRoute({
                     to: '/settings',
                     title: 'Settings',
                     icon: Settings,
-                    variant: 'ghost'
                   }
                 ]}
               />

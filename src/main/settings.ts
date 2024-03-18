@@ -67,6 +67,7 @@ const userDataPath = () => {
 
   return userData
 }
+const setSync = (...args: Parameters<typeof settings.setSync>) => settings.setSync(...args)
 
 // @ts-ignore
 export default {
@@ -75,7 +76,5 @@ export default {
   userDataPath,
   dbPath,
   whisperConfig,
-  setSync:settings.setSync,
-
+  // setSync
 }
-

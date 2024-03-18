@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -53,15 +49,16 @@
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
+    user-select: none;
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
 
@@ -74,15 +71,13 @@
 }
 
 body {
- height: 100vh;
- width: 100vw;
+  height: 100vh;
+  width: 100vw;
 }
-
 
 #root {
   height: 100vh;
   width: 100vw;
-  display:flex;
-  flex-direction:column;
+  display: flex;
+  flex-direction: column;
 }
-

@@ -1,4 +1,4 @@
-export const DATABASE_NAME = "whisky_database";
+export const DATABASE_NAME = "whisky_database.db";
 export const LIBRARY_PATH_SUFFIX = "WhiskyLibrary";
 
 // https://huggingface.co/ggerganov/whisper.cpp/tree/main
