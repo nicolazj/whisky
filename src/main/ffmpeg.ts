@@ -18,7 +18,7 @@ const __filename = url.fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename).replace('app.asar', 'app.asar.unpacked')
 
 const logger = log.scope('ffmpeg')
-export default class FfmpegWrapper {
+export  class FfmpegWrapper {
   convertToWav(input: string, output: string, options: string[] = []): Promise<string> {
     const ffmpeg = Ffmpeg()
     return new Promise((resolve, reject) => {
@@ -53,3 +53,6 @@ export default class FfmpegWrapper {
     })
   }
 }
+
+
+export const ffmpeg = new FfmpegWrapper()

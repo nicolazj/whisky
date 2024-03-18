@@ -1,8 +1,8 @@
-import { sqliteTable, text ,integer } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { createId } from './createId'
 import { sql } from 'drizzle-orm'
 
-export const tasks = sqliteTable('tasks', {
+export const transcrptions = sqliteTable('transcrptions', {
   id: text('id')
     .primaryKey()
     .notNull()
@@ -10,11 +10,10 @@ export const tasks = sqliteTable('tasks', {
   path: text('path').notNull(),
   name: text('name'),
   type: text('type'),
-  size: integer('type'),
   status: text('status').default('init'),
   createdAt: text('timestamp')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`)
 })
 
-export type TaskSelectType = typeof tasks.$inferSelect;
+export type TranscriptionSelectType = typeof transcrptions.$inferSelect

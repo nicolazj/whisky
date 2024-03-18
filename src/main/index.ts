@@ -2,10 +2,8 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import FfmpegWrapper from './ffmpeg'
-import { whisper } from './whisper'
-import { db } from './db'
-import { runMigration } from './db/migrate'
+import { crud } from './db/crud'
+import { queue } from './db/queue'
 
 function createWindow(): void {
   // Create the browser window.
@@ -59,17 +57,8 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
-  // ipcMain.handle('transcribe', async (_event, filepath) => {
-  //   console.log(filepath)
-  //   let ffmpeg = new FfmpegWrapper()
-  //   let wavPath = await ffmpeg.convertToWav(filepath, './1.wav')
-  //   console.log({ wavPath })
-  //   let a = await whisper.transcribe({ file: wavPath })
-  // })
-  await runMigration()
-  db.registerIpcHandlers()
+  crud.init()
+  queue.init()
 
   createWindow()
 

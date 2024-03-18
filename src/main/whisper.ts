@@ -66,13 +66,7 @@ export class Whisper {
     return model.savePath
   }
   async transcribe(
-    params: {
-      file?: string
-      blob?: {
-        type: string
-        arrayBuffer: ArrayBuffer
-      }
-    },
+    file?: string,
     options?: {
       force?: boolean
       extra?: string[]
@@ -80,29 +74,14 @@ export class Whisper {
     }
   ): Promise<Partial<WhisperOutputType>> {
     logger.debug('transcribing from local')
-
-    const { blob } = params
-    let { file } = params
-    if (!file && !blob) {
-      throw new Error('No file or blob provided')
-    }
+  
 
     const model = this.currentModel()
 
-    if (blob) {
-      const format = blob.type.split('/')[1]
-
-      if (format !== 'wav') {
-        throw new Error('Only wav format is supported')
-      }
-
-      file = path.join(settings.cachePath(), `${Date.now()}.${format}`)
-      await fs.outputFile(file, Buffer.from(blob.arrayBuffer))
-    }
 
     const { force = false, extra = [], onProgress } = options || {}
     const filename = path.basename(file!, path.extname(file!))
-    const tmpDir = settings.cachePath()
+    const tmpDir = settings.libraryPath()
     const outputFile = path.join(tmpDir, filename + '.json')
 
     logger.info(`Trying to transcribe ${file} to ${outputFile}`)

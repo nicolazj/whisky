@@ -4,8 +4,6 @@ export type Task =
       files: {
         path: string
         name: string
-        type: string
-        size: number
       }[]
     }
   | {

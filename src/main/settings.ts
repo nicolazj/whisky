@@ -76,5 +76,5 @@ export default {
   userDataPath,
   dbPath,
   whisperConfig,
-  // setSync
+  setSync
 }
