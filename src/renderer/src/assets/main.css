@@ -51,8 +51,7 @@
 
 @layer base {
   * {
-    @apply border-border;
-    user-select: none;
+    @apply border-border select-none;
   }
   body {
     @apply bg-background text-foreground;
@@ -71,13 +70,9 @@
 }
 
 body {
-  height: 100vh;
-  width: 100vw;
+  @apply overflow-hidden h-screen w-screen
 }
 
 #root {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
+  @apply overflow-hidden h-screen w-screen flex flex-col
 }

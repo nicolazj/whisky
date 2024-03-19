@@ -1,9 +1,12 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { crud } from './db/crud'
 import { queue } from './db/queue'
+import path = require('path')
+import settings from './settings'
+app.commandLine.appendSwitch("enable-features", "SharedArrayBuffer");
 
 function createWindow(): void {
   // Create the browser window.
@@ -33,7 +36,6 @@ function createWindow(): void {
     return { action: 'deny' }
   })
   mainWindow.webContents.openDevTools()
-
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
@@ -42,6 +44,37 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+// protocol.registerSchemesAsPrivileged([
+//   {
+//     scheme: "whisky",
+//     privileges: {
+//       standard: true,
+//       secure: true,
+//       bypassCSP: true,
+//       allowServiceWorkers: true,
+//       supportFetchAPI: true,
+//       stream: true,
+//       codeCache: true,
+//       corsEnabled: true,
+//     },
+//   },
+// ]);
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: "whisky",
+    privileges: {
+      standard: true,
+      secure: true,
+      bypassCSP: true,
+      allowServiceWorkers: true,
+      supportFetchAPI: true,
+      stream: true,
+      codeCache: true,
+      corsEnabled: true,
+    },
+  },
+]);
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -57,8 +90,37 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  // protocol.handle('whisky', async(request) =>{
+
+  //   let r = await net.fetch('file://' + request.url.slice('whisky://'.length))
+  //   console.log({r})
+  //   return  r
+  // })
+   
+  protocol.handle("whisky", async (request) => {
+    // let url = request.url.replace("enjoy://", "");
+    // // if (url.match(/library\/(audios|videos|recordings|speeches)/g)) {
+    // //   url = url.replace("library/", "");
+    // //   url = path.join(settings.userDataPath(), url);
+    // // } else if (url.startsWith("library")) {
+    // //   url = url.replace("library/", "");
+    // //   url = path.join(settings.libraryPath(), url);
+    // // }
+
+    // console.log({url})
+
+    // return await net.fetch(`file:///${url}`);
+
+    let path = 'file:///' + request.url.slice('whisky://'.length)
+    console.log({path})
+    return  net.fetch(path)
+  });
+  
+
   crud.init()
   queue.init()
+
+
 
   createWindow()
 

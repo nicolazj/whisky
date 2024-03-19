@@ -4,11 +4,6 @@ export const Route = createLazyFileRoute('/')({
   component: Index
 })
 
-
-
 function Index() {
-
-  return (
-   <NewTask/>
-  )
+  return <NewTask />
 }

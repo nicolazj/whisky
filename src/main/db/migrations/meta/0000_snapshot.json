@@ -1,11 +1,11 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "93223f7f-5bfc-4a9f-ab96-56967188680d",
+  "id": "a34d2538-756b-40d0-a857-cecb592848db",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "tasks": {
-      "name": "tasks",
+    "transcrptions": {
+      "name": "transcrptions",
       "columns": {
         "id": {
           "name": "id",
@@ -30,7 +30,7 @@
         },
         "type": {
           "name": "type",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -45,11 +45,10 @@
         },
         "timestamp": {
           "name": "timestamp",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         }
       },
       "indexes": {},

@@ -13,11 +13,13 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TranscriptionsImport } from './routes/transcriptions'
+import { Route as TranscriptionsIndexImport } from './routes/transcriptions.index'
+import { Route as TranscriptionsIdImport } from './routes/transcriptions.$id'
 
 // Create Virtual Routes
 
 const SettingsLazyImport = createFileRoute('/settings')()
-const QueueLazyImport = createFileRoute('/queue')()
 const ChatLazyImport = createFileRoute('/chat')()
 const AboutLazyImport = createFileRoute('/about')()
 const IndexLazyImport = createFileRoute('/')()
@@ -29,11 +31,6 @@ const SettingsLazyRoute = SettingsLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
 
-const QueueLazyRoute = QueueLazyImport.update({
-  path: '/queue',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/queue.lazy').then((d) => d.Route))
-
 const ChatLazyRoute = ChatLazyImport.update({
   path: '/chat',
   getParentRoute: () => rootRoute,
@@ -44,10 +41,25 @@ const AboutLazyRoute = AboutLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
+const TranscriptionsRoute = TranscriptionsImport.update({
+  path: '/transcriptions',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const TranscriptionsIndexRoute = TranscriptionsIndexImport.update({
+  path: '/',
+  getParentRoute: () => TranscriptionsRoute,
+} as any)
+
+const TranscriptionsIdRoute = TranscriptionsIdImport.update({
+  path: '/$id',
+  getParentRoute: () => TranscriptionsRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -55,6 +67,10 @@ declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/transcriptions': {
+      preLoaderRoute: typeof TranscriptionsImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -65,13 +81,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatLazyImport
       parentRoute: typeof rootRoute
     }
-    '/queue': {
-      preLoaderRoute: typeof QueueLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/settings': {
       preLoaderRoute: typeof SettingsLazyImport
       parentRoute: typeof rootRoute
+    }
+    '/transcriptions/$id': {
+      preLoaderRoute: typeof TranscriptionsIdImport
+      parentRoute: typeof TranscriptionsImport
+    }
+    '/transcriptions/': {
+      preLoaderRoute: typeof TranscriptionsIndexImport
+      parentRoute: typeof TranscriptionsImport
     }
   }
 }
@@ -80,9 +100,12 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  TranscriptionsRoute.addChildren([
+    TranscriptionsIdRoute,
+    TranscriptionsIndexRoute,
+  ]),
   AboutLazyRoute,
   ChatLazyRoute,
-  QueueLazyRoute,
   SettingsLazyRoute,
 ])
 

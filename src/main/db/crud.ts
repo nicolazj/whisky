@@ -7,7 +7,9 @@ import { getDB } from './db'
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import path from 'path'
 import { eq, desc } from 'drizzle-orm'
-
+import { readFile } from 'fs/promises'
+import settings from '../settings'
+import { WhisperOutputType } from '../../shared/whisper.types'
 const logger = log.scope('crud')
 
 // This will run migrations on the database, skipping the ones already applied
@@ -45,7 +47,7 @@ export class CRUD {
   }
 
   public async getTasks() {
-    return this.db.select().from(transcrptions).all()
+    return await this.db.select().from(transcrptions).orderBy(desc(transcrptions.createdAt)).all()
   }
   public async pickTask() {
     let items = await this.db
@@ -68,9 +70,25 @@ export class CRUD {
   public async updateTask(id: string, status: string) {
     return this.db.update(transcrptions).set({ status: status }).where(eq(transcrptions.id, id))
   }
+
+  public async getTranscriptionById(id: string) {
+    let items = await this.db.select().from(transcrptions).where(eq(transcrptions.id, id)).limit(1)
+    return items.length > 0 ? items[0] : undefined
+  }
+  public async getTransJSONById(id: string) {
+    let b = await readFile(path.resolve(settings.libraryPath(), `${id}.json`), 'utf-8')
+    let json = JSON.parse(b) as WhisperOutputType
+    return json
+  }
   private registerIpcHandlers() {
     ipcMain.handle('getTasks', async () => {
       return this.getTasks()
+    })
+    ipcMain.handle('get-transcription-by-id', (_event, id: string) => {
+      return this.getTranscriptionById(id)
+    })
+    ipcMain.handle('get-transjson-by-id', (_event, id: string) => {
+      return this.getTransJSONById(id)
     })
   }
 }

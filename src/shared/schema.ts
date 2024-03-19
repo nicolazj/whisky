@@ -1,6 +1,5 @@
-import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text ,integer} from 'drizzle-orm/sqlite-core'
 import { createId } from './createId'
-import { sql } from 'drizzle-orm'
 
 export const transcrptions = sqliteTable('transcrptions', {
   id: text('id')
@@ -11,9 +10,9 @@ export const transcrptions = sqliteTable('transcrptions', {
   name: text('name'),
   type: text('type'),
   status: text('status').default('init'),
-  createdAt: text('timestamp')
+  createdAt: integer('timestamp')
     .notNull()
-    .default(sql`CURRENT_TIMESTAMP`)
+    .$defaultFn(()=>Date.now())
 })
 
 export type TranscriptionSelectType = typeof transcrptions.$inferSelect

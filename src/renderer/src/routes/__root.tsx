@@ -16,12 +16,12 @@ export const Route = createRootRoute({
     const { data: task } = useFetchTasks()
     return (
       <>
-        <header className="h-8 w-full drag border-b"></header>
+        <header className="h-8 min-h-8 w-full drag border-b"></header>
         <div className="flex-1">
           <ResizablePanelGroup direction="horizontal" className="h-full  items-stretch">
             <ResizablePanel
-              maxSize={20}
-              minSize={15}
+              maxSize={24}
+              minSize={20}
               collapsedSize={4}
               className={cn(
                 isCollapsed && 'min-w-[50px] ',
@@ -40,13 +40,13 @@ export const Route = createRootRoute({
                 links={[
                   {
                     to: '/',
-                    title: 'Transcriptions',
+                    title: 'Home',
                     //   label: '128',
                     icon: AudioLines,
                   },
                   {
-                    to: '/queue',
-                    title: 'Queue',
+                    to: '/transcriptions',
+                    title: 'Transcriptions',
                     label: task?.length?.toString() ?? '',
                     icon: ListOrdered,
                   },

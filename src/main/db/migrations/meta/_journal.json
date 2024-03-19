@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1710733695952,
-      "tag": "0000_nervous_ultimates",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1710798064943,
-      "tag": "0001_nappy_norman_osborn",
+      "when": 1710810410503,
+      "tag": "0000_abnormal_mystique",
       "breakpoints": true
     }
   ]

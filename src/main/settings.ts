@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, ipcMain } from 'electron'
 import settings from 'electron-settings'
 import fs from 'fs-extra'
 import path from 'path'
@@ -68,6 +68,8 @@ const userDataPath = () => {
   return userData
 }
 const setSync = (...args: Parameters<typeof settings.setSync>) => settings.setSync(...args)
+
+ipcMain.handle('get-library-path',()=>libraryPath())
 
 // @ts-ignore
 export default {
