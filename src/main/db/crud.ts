@@ -84,7 +84,11 @@ export class CRUD {
   public async getWhisperModels() {
     return await Promise.all(
       WHISPER_MODELS_OPTIONS.map(async (o) => {
-        return { ...o, downloaded: fs.existsSync(path.join(setting.whisperModelPath(), o.name)) }
+        return {
+          ...o,
+          downloaded: fs.existsSync(path.join(setting.whisperModelPath(), o.name)),
+          active: setting.whisperModel() === o.name
+        }
       })
     )
   }

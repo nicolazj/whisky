@@ -11,6 +11,9 @@ function WhisperSettings() {
   let { data = [] } = useFetchWhisperModel()
   let downloaded = data.filter((d) => d.downloaded)
   let undownloaded = data.filter((d) => !d.downloaded)
+  let download =(name:string)=>{
+    window.api.downloadWhisperModel(name)
+  }
   return (
     <div className="w-[400px]">
       <h1 className="text-xl mb-4">Whisper settings</h1>
@@ -22,9 +25,13 @@ function WhisperSettings() {
             return (
               <TableRow key={model.name}>
                 <TableCell>
-                  <div className="text-sm font-bold">{model.type}</div>
+                  <div className="text-sm font-bold flex  gap-2 items-center">
+                    {model.type}
+                    {model.active ? <span className="text-[10px] rounded bg-foreground/30 block px-1"> ACTIVE</span> : null}
+                  </div>
                   <div className="text-xs opacity-50">{model.desc}</div>
                 </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             )
           })}
@@ -44,7 +51,7 @@ function WhisperSettings() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Download className="w-4" />
+                  <Download className="w-4" onClick={()=>download(model.name)}/>
                 </TableCell>
               </TableRow>
             )
