@@ -42,30 +42,30 @@ export const Route = createRootRoute({
                     to: '/',
                     title: 'Home',
                     //   label: '128',
-                    icon: AudioLines,
+                    icon: AudioLines
                   },
                   {
                     to: '/transcriptions',
                     title: 'Transcriptions',
                     label: task?.length?.toString() ?? '',
-                    icon: ListOrdered,
+                    icon: ListOrdered
                   },
                   {
                     to: '/chat',
                     title: 'Chat',
-                    icon: Bot,
+                    icon: Bot
                   }
                 ]}
               />
 
               <Separator className="flex-1" />
               <Nav
-                isCollapsed={false}
+                isCollapsed={isCollapsed}
                 links={[
                   {
                     to: '/settings',
                     title: 'Settings',
-                    icon: Settings,
+                    icon: Settings
                   }
                 ]}
               />

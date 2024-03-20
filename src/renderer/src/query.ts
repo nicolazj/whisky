@@ -6,3 +6,9 @@ export function useFetchTasks() {
     queryFn: window.api.getTasks
   })
 }
+export function useFetchWhisperModel(){
+  return useQuery({
+    queryKey: ['models'],
+    queryFn: window.api.getWhisperModels
+  })
+}

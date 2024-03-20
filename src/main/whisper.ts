@@ -4,7 +4,8 @@ import path from 'path'
 import url from 'url'
 import { PROCESS_TIMEOUT, WHISPER_MODELS_OPTIONS } from './constants'
 import log from './logger'
-import settings from './settings'
+import { setting } from './settings'
+import { WhisperConfigType, WhisperOutputType } from '../shared/whisper.types'
 
 const __filename = url.fileURLToPath(import.meta.url)
 
@@ -13,57 +14,14 @@ const logger = log.scope('whisper')
 
 export class Whisper {
   private binMain: string
-  private bundledModelsDir: string
-  public config: WhisperConfigType
 
   constructor() {
-    this.bundledModelsDir = path.join(__dirname, 'lib', 'whisper', 'models')
-
     this.binMain = path.join(__dirname, 'lib', 'whisper', 'main')
-
-    const models: Array<(typeof WHISPER_MODELS_OPTIONS)[number] & { savePath: string }> = []
-
-    const bundledModels = fs.readdirSync(this.bundledModelsDir)
-    for (const file of bundledModels) {
-      const model = WHISPER_MODELS_OPTIONS.find((m) => m.name == file)
-      if (!model) continue
-
-      models.push({
-        ...model,
-        savePath: path.join(this.bundledModelsDir, file)
-      })
-    }
-
-    const dir = path.join(settings.libraryPath(), 'whisper', 'models')
-    fs.ensureDirSync(dir)
-    const files = fs.readdirSync(dir)
-    for (const file of files) {
-      const model = WHISPER_MODELS_OPTIONS.find((m) => m.name == file)
-      if (!model) continue
-
-      models.push({
-        ...model,
-        savePath: path.join(dir, file)
-      })
-    }
-    settings.setSync('whisper.availableModels', models)
-    settings.setSync('whisper.modelsPath', dir)
-    this.config = settings.whisperConfig()
   }
 
   currentModel() {
-    if (!this.config.availableModels) return
-
-    let model: WhisperConfigType['availableModels'][0] | undefined
-    if (this.config.model) {
-      model = (this.config.availableModels || []).find((m) => m.name === this.config.model)
-    }
-    if (!model) {
-      model = this.config.availableModels[0]
-    }
-
-    settings.setSync('whisper.model', model.name)
-    return model.savePath
+    let config = setting.whisperConfig()
+    return config.modelsPath
   }
   async transcribe(
     file?: string,
@@ -74,14 +32,12 @@ export class Whisper {
     }
   ): Promise<Partial<WhisperOutputType>> {
     logger.debug('transcribing from local')
-  
 
     const model = this.currentModel()
 
-
     const { force = false, extra = [], onProgress } = options || {}
     const filename = path.basename(file!, path.extname(file!))
-    const tmpDir = settings.libraryPath()
+    const tmpDir = setting.libraryPath()
     const outputFile = path.join(tmpDir, filename + '.json')
 
     logger.info(`Trying to transcribe ${file} to ${outputFile}`)
@@ -89,7 +45,6 @@ export class Whisper {
       logger.info(`File ${outputFile} already exists`)
       return fs.readJson(outputFile)
     }
-    console.log({model})
 
     const commandArguments: string[] = [
       '--file',
@@ -97,7 +52,7 @@ export class Whisper {
       '--model',
       model!,
       '--output-json',
-      
+
       '--output-txt',
       '--output-file',
       path.join(tmpDir, filename),

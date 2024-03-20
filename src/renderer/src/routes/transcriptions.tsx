@@ -4,7 +4,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup
 } from '@renderer/components/resizable'
-import { TranscriptionList } from '@renderer/components/transcription-list'
+import { TranscriptionList } from '@renderer/components/trans-list'
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
 

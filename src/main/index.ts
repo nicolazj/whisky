@@ -1,67 +1,14 @@
-import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { app, BrowserWindow, ipcMain, protocol, net } from 'electron'
+import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { crud } from './db/crud'
 import { queue } from './db/queue'
-import path = require('path')
-import settings from './settings'
-app.commandLine.appendSwitch("enable-features", "SharedArrayBuffer");
+import { setting } from './settings'
+import { wm } from './window'
+import { downloader } from './download'
 
-function createWindow(): void {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    minWidth:800,
-    show: false,
-    // frame:false,
-    titleBarStyle: 'hidden',
-    // roundedCorners: false,
-    // resizable: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
-
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
-
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
-  mainWindow.webContents.openDevTools()
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-}
-// protocol.registerSchemesAsPrivileged([
-//   {
-//     scheme: "whisky",
-//     privileges: {
-//       standard: true,
-//       secure: true,
-//       bypassCSP: true,
-//       allowServiceWorkers: true,
-//       supportFetchAPI: true,
-//       stream: true,
-//       codeCache: true,
-//       corsEnabled: true,
-//     },
-//   },
-// ]);
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: "whisky",
+    scheme: 'whisky',
     privileges: {
       standard: true,
       secure: true,
@@ -70,11 +17,10 @@ protocol.registerSchemesAsPrivileged([
       supportFetchAPI: true,
       stream: true,
       codeCache: true,
-      corsEnabled: true,
-    },
-  },
-]);
-
+      corsEnabled: true
+    }
+  }
+])
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -90,44 +36,21 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // protocol.handle('whisky', async(request) =>{
-
-  //   let r = await net.fetch('file://' + request.url.slice('whisky://'.length))
-  //   console.log({r})
-  //   return  r
-  // })
-   
-  protocol.handle("whisky", async (request) => {
-    // let url = request.url.replace("enjoy://", "");
-    // // if (url.match(/library\/(audios|videos|recordings|speeches)/g)) {
-    // //   url = url.replace("library/", "");
-    // //   url = path.join(settings.userDataPath(), url);
-    // // } else if (url.startsWith("library")) {
-    // //   url = url.replace("library/", "");
-    // //   url = path.join(settings.libraryPath(), url);
-    // // }
-
-    // console.log({url})
-
-    // return await net.fetch(`file:///${url}`);
-
+  protocol.handle('whisky', async (request) => {
     let path = 'file:///' + request.url.slice('whisky://'.length)
-    console.log({path})
-    return  net.fetch(path)
-  });
-  
+    return net.fetch(path)
+  })
 
+  setting.init()
   crud.init()
   queue.init()
-
-
-
-  createWindow()
+  let win = wm.init()
+  downloader.init(win)
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) wm.init()
   })
 })
 

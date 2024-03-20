@@ -1,11 +1,9 @@
-import { ipcMain } from 'electron'
 import ffmpegPath from 'ffmpeg-static'
 import ffprobePath from '@andrkrn/ffprobe-static'
 import Ffmpeg from 'fluent-ffmpeg'
 import log from './logger'
 import path from 'path'
 import fs from 'fs-extra'
-import url from 'url'
 
 /*
  * ffmpeg and ffprobe bin file will be in /app.asar.unpacked instead of /app.asar
@@ -13,9 +11,6 @@ import url from 'url'
  */
 Ffmpeg.setFfmpegPath(ffmpegPath!.replace('app.asar', 'app.asar.unpacked'))
 Ffmpeg.setFfprobePath(ffprobePath!.replace('app.asar', 'app.asar.unpacked'))
-
-const __filename = url.fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename).replace('app.asar', 'app.asar.unpacked')
 
 const logger = log.scope('ffmpeg')
 export  class FfmpegWrapper {

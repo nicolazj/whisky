@@ -3,22 +3,22 @@ import { ipcMain } from 'electron'
 import { Task } from '../../shared/api'
 import log from '../logger'
 import { transcrptions } from '../../shared/schema'
-import { getDB } from './db'
+import { db } from './db'
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator'
 import path from 'path'
+import fs from 'fs-extra'
 import { eq, desc } from 'drizzle-orm'
 import { readFile } from 'fs/promises'
-import settings from '../settings'
+import { setting } from '../settings'
 import { WhisperOutputType } from '../../shared/whisper.types'
+import { WHISPER_MODELS_OPTIONS } from '../constants'
+
 const logger = log.scope('crud')
 
 // This will run migrations on the database, skipping the ones already applied
 
 export class CRUD {
-  private db: BetterSQLite3Database
-  constructor() {
-    this.db = getDB().db
-  }
+  constructor(private db: BetterSQLite3Database) {}
 
   public async init() {
     await this.migration()
@@ -26,7 +26,8 @@ export class CRUD {
   }
 
   private async migration() {
-    await migrate(this.db, { migrationsFolder: path.resolve(__dirname, './migrations') })
+    logger.log('migration started...')
+    migrate(this.db, { migrationsFolder: path.resolve(__dirname, './migrations') })
   }
 
   public async addTask(task: Task) {
@@ -76,12 +77,19 @@ export class CRUD {
     return items.length > 0 ? items[0] : undefined
   }
   public async getTransJSONById(id: string) {
-    let b = await readFile(path.resolve(settings.libraryPath(), `${id}.json`), 'utf-8')
+    let b = await readFile(path.resolve(setting.libraryPath(), `${id}.json`), 'utf-8')
     let json = JSON.parse(b) as WhisperOutputType
     return json
   }
+  public async getWhisperModels() {
+    return await Promise.all(
+      WHISPER_MODELS_OPTIONS.map(async (o) => {
+        return { ...o, downloaded: fs.existsSync(path.join(setting.whisperModelPath(), o.name)) }
+      })
+    )
+  }
   private registerIpcHandlers() {
-    ipcMain.handle('getTasks', async () => {
+    ipcMain.handle('get-tasks', async () => {
       return this.getTasks()
     })
     ipcMain.handle('get-transcription-by-id', (_event, id: string) => {
@@ -90,7 +98,10 @@ export class CRUD {
     ipcMain.handle('get-transjson-by-id', (_event, id: string) => {
       return this.getTransJSONById(id)
     })
+    ipcMain.handle('get-whisper-models', (_event) => {
+      return this.getWhisperModels()
+    })
   }
 }
 
-export const crud = new CRUD()
+export const crud = new CRUD(db)

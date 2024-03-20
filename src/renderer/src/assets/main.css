@@ -69,6 +69,10 @@
   -webkit-app-region: no-drag;
 }
 
+.skip-ink {
+  text-decoration-skip-ink: none;
+}
+
 body {
   @apply overflow-hidden h-screen w-screen
 }

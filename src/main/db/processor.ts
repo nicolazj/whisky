@@ -1,7 +1,7 @@
 import path from 'path'
 import { TranscriptionSelectType } from '../../shared/schema'
 import { ffmpeg } from '../ffmpeg'
-import settings from '../settings'
+import {setting} from '../settings'
 import { whisper } from '../whisper'
 
 export type Processor = (
@@ -12,7 +12,7 @@ export type Processor = (
 export const processor: Processor = async (trans, onProgress) => {
   let wavPath = await ffmpeg.convertToWav(
     trans.path,
-    path.resolve(settings.libraryPath(), `${trans.id}.wav`)
+    path.resolve(setting.libraryPath(), `${trans.id}.wav`)
   )
   console.log({ wavPath })
   await whisper.transcribe(wavPath, { onProgress })

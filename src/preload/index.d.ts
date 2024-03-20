@@ -6,3 +6,10 @@ declare global {
     api: API
   }
 }
+
+
+declare module 'electron' {
+  interface IpcRenderer {
+   invoke(eventName: "event1" | "event2", ...args: any[]): Promise<any>;
+ }
+}

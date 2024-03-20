@@ -15,7 +15,7 @@ export const Route = createFileRoute('/transcriptions/$id')({
 function Transcriptions() {
   const { trans, json,library } = Route.useLoaderData()
   return (
-    <div className="flex flex-col border-red-500 border-2 h-full">
+    <div className="flex flex-col  h-full p-4">
       {/* <div className="border-yellow-500 border-2 overflow-y-scroll">
         <div className="h-[2000px] border-blue-500 border-4"></div>
       </div> */}

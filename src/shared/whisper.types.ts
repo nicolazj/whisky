@@ -1,15 +1,8 @@
 
 
 
-type WhisperConfigType = {
+export type WhisperConfigType = {
   service: "local" | "azure" | "cloudflare" | "openai";
-  availableModels: {
-    type: string;
-    name: string;
-    size: string;
-    url: string;
-    savePath: string;
-  }[];
   modelsPath: string;
   model: string;
   ready?: boolean;
@@ -48,7 +41,7 @@ export type WhisperOutputType = {
   transcription: TranscriptionResultSegmentType[];
 };
 
-type TranscriptionType = {
+export type TranscriptionType = {
   id: string;
   targetId: string;
   targetType: string;
@@ -58,7 +51,7 @@ type TranscriptionType = {
   result: TranscriptionResultSegmentGroupType[];
 };
 
-type TranscriptionResultSegmentType = {
+export type TranscriptionResultSegmentType = {
   offsets: {
     from: number;
     to: number;
