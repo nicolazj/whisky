@@ -1,14 +1,10 @@
 # whisky
 
-An Electron application with React and TypeScript
+A speech to text app based Whisper.cpp 
 
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-## Project Setup
-
-### Install
+![alt text](1.png)
+![alt text](2.png)
+![alt text](3.png)
 
 ```bash
 $ pnpm install
