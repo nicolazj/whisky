@@ -1,8 +1,8 @@
 import { ipcMain } from 'electron'
-import { Task } from '../../shared/api'
+import { TransTask } from '../../shared/api.types'
 import log from '../logger'
 import { CRUD, crud } from './crud'
-import { processor } from './processor'
+import { processor } from '../processor'
 import { wm } from '../window'
 
 const logger = log.scope('queue')
@@ -17,8 +17,12 @@ export class Queue {
     this.runTask()
   }
 
-  private async addTask(task: Task) {
+  private async addTask(task: TransTask) {
     await this.crud.addTask(task)
+    this.runTask()
+  }
+  private async reTransById(id){
+    await this.crud.updateTask(id,'init')
     this.runTask()
   }
 
@@ -43,7 +47,7 @@ export class Queue {
           })
 
           await self.crud.updateTask(task.id, 'done')
-          wm.win?.webContents.send('query-client-revalidate', ['tasks'])
+          wm.getWin()?.webContents.send('query-client-revalidate', ['tasks'])
 
         } catch (e) {
           logger.error('transcribe failed', e)
@@ -59,10 +63,15 @@ export class Queue {
   }
 
   private registerIpcHandlers() {
-    ipcMain.handle('add-task', async (event, task: Task) => {
+    ipcMain.handle('add-task', async (event, task: TransTask) => {
       await this.addTask(task)
       event.sender.send('query-client-revalidate', ['tasks'])
     })
+    ipcMain.handle('re-trans-by-id', async (event, id: string) => {
+      await this.reTransById(id)
+      event.sender.send('query-client-revalidate', ['tasks'])
+    })
+
   }
 }
 

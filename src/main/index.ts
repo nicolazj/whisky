@@ -5,6 +5,7 @@ import { queue } from './db/queue'
 import { setting } from './settings'
 import { wm } from './window'
 import { downloader } from './download'
+import { whisper } from './whisper'
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -44,8 +45,9 @@ app.whenReady().then(async () => {
   setting.init()
   crud.init()
   queue.init()
-  let win = wm.init()
-  downloader.init(win)
+  wm.init()
+  whisper.init()
+  downloader.init()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

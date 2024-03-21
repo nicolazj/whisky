@@ -2,10 +2,11 @@ import { spawn } from 'child_process'
 import fs from 'fs-extra'
 import path from 'path'
 import url from 'url'
-import { PROCESS_TIMEOUT, WHISPER_MODELS_OPTIONS } from './constants'
+import { PROCESS_TIMEOUT, WHISPER_MODELS_OPTIONS } from '../shared/constants'
 import log from './logger'
 import { setting } from './settings'
 import { WhisperConfigType, WhisperOutputType } from '../shared/whisper.types'
+import { ipcMain } from 'electron'
 
 const __filename = url.fileURLToPath(import.meta.url)
 
@@ -17,6 +18,9 @@ export class Whisper {
 
   constructor() {
     this.binMain = path.join(__dirname, 'lib', 'whisper', 'main')
+  }
+  init() {
+    this.registerIpcHandlers()
   }
 
   currentModel() {
@@ -35,7 +39,7 @@ export class Whisper {
 
     const model = this.currentModel()
 
-    const { force = false, extra = [], onProgress } = options || {}
+    const { force = true, extra = [], onProgress } = options || {}
     const filename = path.basename(file!, path.extname(file!))
     const tmpDir = setting.libraryPath()
     const outputFile = path.join(tmpDir, filename + '.json')
@@ -99,6 +103,22 @@ export class Whisper {
           reject(new Error('Transcription failed'))
         }
       })
+    })
+  }
+
+  public async getWhisperModels() {
+    return WHISPER_MODELS_OPTIONS.map((o) => {
+      return {
+        ...o,
+        downloaded: fs.existsSync(path.join(setting.whisperModelPath(), o.name)),
+        active: setting.whisperModel() === o.name
+      }
+    })
+  }
+
+  private registerIpcHandlers() {
+    ipcMain.handle('get-whisper-models', (_event) => {
+      return this.getWhisperModels()
     })
   }
 }

@@ -5,7 +5,7 @@ import icon from '../../resources/icon.png?asset'
 
 export function createWindow(): void {}
 
-class MainWindow {
+export class WindowManage {
   public win: BrowserWindow | undefined
 
   init() {
@@ -44,8 +44,11 @@ class MainWindow {
       mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
     }
 
-    return this.win = mainWindow
+    this.win = mainWindow
+  }
+  getWin() {
+    return this.win
   }
 }
 
-export const wm = new MainWindow()
+export const wm = new WindowManage()

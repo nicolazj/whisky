@@ -1,4 +1,4 @@
-export type Task =
+export type TransTask =
   | {
       type: 'file'
       files: {
