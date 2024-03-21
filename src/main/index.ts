@@ -6,6 +6,7 @@ import { setting } from './settings'
 import { wm } from './window'
 import { downloader } from './download'
 import { whisper } from './whisper'
+import { onboarding } from './onboarding'
 
 protocol.registerSchemesAsPrivileged([
   {
@@ -48,6 +49,7 @@ app.whenReady().then(async () => {
   wm.init()
   whisper.init()
   downloader.init()
+  onboarding.init()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

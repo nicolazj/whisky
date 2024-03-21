@@ -5,7 +5,7 @@ import url from 'url'
 import { PROCESS_TIMEOUT, WHISPER_MODELS_OPTIONS } from '../shared/constants'
 import log from './logger'
 import { setting } from './settings'
-import { WhisperConfigType, WhisperOutputType } from '../shared/whisper.types'
+import { WhisperOutputType } from '../shared/whisper.types'
 import { ipcMain } from 'electron'
 
 const __filename = url.fileURLToPath(import.meta.url)
@@ -56,11 +56,12 @@ export class Whisper {
       '--model',
       model!,
       '--output-json',
-
       '--output-txt',
       '--output-file',
       path.join(tmpDir, filename),
       '-pp',
+      '--language',
+      'auto',
       '--split-on-word',
       '--max-len',
       '1',

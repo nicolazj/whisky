@@ -4,7 +4,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
 } from '@renderer/components/dialog'
 import { Progress } from '@renderer/components/progress'
 import { useFetchSetting } from '@renderer/query'
@@ -24,22 +23,6 @@ export function Onboarding() {
       }
     )
   }, [])
-
-  useEffect(()=>{
-    if(show){
-      window.api.downloadWhisperModel(WHISPER_MODELS_OPTIONS[0].name)
-    }
-  },[show])
-
-  useEffect(()=>{
-    return window.electron.ipcRenderer.on(
-      `download-whisper-model-succeeded-${WHISPER_MODELS_OPTIONS[0].name}`,
-      (_event, ) => {
-        setProgress(progress)
-        window.api.setSetting('onboarded',true)
-      }
-    )
-  },[])
 
   return (
     <Dialog open={show}>

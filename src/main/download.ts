@@ -24,29 +24,33 @@ class Downloader {
     this.registerIpcHandlers()
   }
 
+  async downloadWhisperModel(name: string) {
+    let model = WHISPER_MODELS_OPTIONS.find((op) => op.name === name)!
+    let win = this.wm.getWin()
+    try {
+      await download(win!, model.url, {
+        showBadge: true,
+        overwrite: true,
+        filename: model.name,
+        directory: setting.whisperModelPath(),
+        onProgress: (p) => {
+          win?.webContents.send(`download-whisper-model-progress-${model.name}`, p.percent * 100)
+        }
+      })
+      const hash = await hashFile(path.join(setting.whisperModelPath(), model.name))
+      if (hash === model.sha) {
+        win?.webContents.send(`download-whisper-model-succeeded-${model.name}`)
+      } else throw 'sha not matched'
+    } catch (err) {
+      win?.webContents.send(`download-whisper-model-failed-${model.name}`)
+    } finally {
+      win?.webContents.send('query-client-revalidate', ['models'])
+    }
+  }
+
   private registerIpcHandlers() {
     ipcMain.handle('download-whisper-model', async (event, name: string) => {
-      let model = WHISPER_MODELS_OPTIONS.find((op) => op.name === name)!
-      let win = this.wm.getWin()
-      try {
-        await download(win!, model.url, {
-          showBadge: true,
-          overwrite: true,
-          filename: model.name,
-          directory: setting.whisperModelPath(),
-          onProgress: (p) => {
-            event.sender.send(`download-whisper-model-progress-${model.name}`, p.percent * 100)
-          }
-        })
-        const hash = await hashFile(path.join(setting.whisperModelPath(), model.name))
-        if (hash === model.sha) {
-          event.sender.send(`download-whisper-model-succeeded-${model.name}`)
-        } else throw 'sha not matched'
-      } catch (err) {
-        event.sender.send(`download-whisper-model-failed-${model.name}`)
-      } finally {
-        event.sender.send('query-client-revalidate', ['models'])
-      }
+      this.downloadWhisperModel(name)
     })
   }
 }
